@@ -134,4 +134,4 @@ claude-usage-extension/
 
 ---
 
-*Built with Claude Sonnet 4.6 via claude.ai*
+
