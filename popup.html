@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Usage</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    width: 320px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #FAF9F7;
+    color: #1a1a1a;
+  }
+
+  .header {
+    background: #1a1a1a;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .claude-logo {
+    width: 22px;
+    height: 22px;
+    background: #C75A30;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: white;
+  }
+
+  .header h1 {
+    font-size: 13px;
+    font-weight: 600;
+    color: white;
+    letter-spacing: 0.01em;
+  }
+
+  .plan-pill {
+    font-size: 10px;
+    font-weight: 600;
+    background: rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.9);
+    padding: 2px 8px;
+    border-radius: 20px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .live-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #4ade80;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  .content { padding: 14px 16px; }
+
+  .section-title {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #888;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .metric {
+    background: white;
+    border: 0.5px solid #e5e5e5;
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+  }
+
+  .metric-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+
+  .metric-name {
+    font-size: 12px;
+    font-weight: 500;
+    color: #333;
+  }
+
+  .metric-sub {
+    font-size: 10px;
+    color: #999;
+    margin-top: 2px;
+  }
+
+  .metric-pct {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1a1a1a;
+    line-height: 1;
+  }
+
+  .track {
+    height: 5px;
+    background: #eeeeee;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.8s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  .fill-session { background: #C75A30; }
+  .fill-all { background: #378ADD; }
+  .fill-design { background: #7F77DD; }
+  .fill-routines { background: #1D9E75; }
+
+  .chip {
+    font-size: 10px;
+    font-weight: 500;
+    padding: 2px 7px;
+    border-radius: 8px;
+    margin-top: 6px;
+    display: inline-block;
+  }
+
+  .chip-warn { background: #FAEEDA; color: #854F0B; }
+  .chip-ok { background: #EAF3DE; color: #3B6D11; }
+  .chip-low { background: #E1F5EE; color: #0F6E56; }
+  .chip-empty { background: #f0f0f0; color: #666; }
+
+  .divider {
+    height: 0.5px;
+    background: #e8e8e8;
+    margin: 12px 0;
+  }
+
+  .footer {
+    padding: 10px 16px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 0.5px solid #e8e8e8;
+  }
+
+  .last-updated {
+    font-size: 10px;
+    color: #aaa;
+  }
+
+  .refresh-btn {
+    font-size: 11px;
+    font-weight: 500;
+    color: #C75A30;
+    background: none;
+    border: 0.5px solid #C75A30;
+    border-radius: 6px;
+    padding: 4px 10px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .refresh-btn:hover { background: #FAECE7; }
+  .refresh-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .open-btn {
+    font-size: 10px;
+    color: #999;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    transition: color 0.15s;
+  }
+
+  .open-btn:hover { color: #C75A30; }
+
+  .loading {
+    text-align: center;
+    padding: 24px;
+    color: #999;
+    font-size: 12px;
+  }
+
+  .spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #eee;
+    border-top-color: #C75A30;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    margin: 0 auto 8px;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .error {
+    text-align: center;
+    padding: 20px 16px;
+    color: #666;
+    font-size: 12px;
+    line-height: 1.6;
+  }
+
+  .error strong { color: #C75A30; font-size: 13px; display: block; margin-bottom: 6px; }
+
+  .error a {
+    color: #C75A30;
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  #data-view { display: none; }
+  #error-view { display: none; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="claude-logo">C</div>
+    <h1>Claude Usage</h1>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <span class="plan-pill" id="plan-label">Team</span>
+    <div class="live-dot"></div>
+  </div>
+</div>
+
+<div id="loading-view" class="loading">
+  <div class="spinner"></div>
+  <span id="loading-msg">Loading your usage...</span>
+</div>
+
+<div id="error-view" class="error">
+  <strong>Couldn't load usage</strong>
+  Make sure you're logged into Claude, then try refreshing.<br><br>
+  <a href="https://claude.ai/settings/usage" target="_blank">Open Claude settings →</a>
+</div>
+
+<div id="data-view">
+  <div class="content">
+    <div class="section-title">
+      Current session
+      <span id="session-reset" style="font-weight:400;text-transform:none;letter-spacing:0;color:#aaa;font-size:10px;"></span>
+    </div>
+
+    <div class="metric">
+      <div class="metric-top">
+        <div>
+          <div class="metric-name">Session limit</div>
+          <div class="metric-sub" id="session-sub"></div>
+        </div>
+        <div class="metric-pct" id="session-pct">—</div>
+      </div>
+      <div class="track"><div class="fill fill-session" id="fill-session" style="width:0%"></div></div>
+      <span class="chip" id="chip-session"></span>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section-title">
+      Weekly limits
+      <span style="font-weight:400;text-transform:none;letter-spacing:0;color:#aaa;font-size:10px;">Resets Sun 1:00 PM</span>
+    </div>
+
+    <div class="metric">
+      <div class="metric-top">
+        <div>
+          <div class="metric-name">All models</div>
+          <div class="metric-sub">Weekly usage across all Claude models</div>
+        </div>
+        <div class="metric-pct" id="all-pct">—</div>
+      </div>
+      <div class="track"><div class="fill fill-all" id="fill-all" style="width:0%"></div></div>
+      <span class="chip" id="chip-all"></span>
+    </div>
+
+    <div class="metric">
+      <div class="metric-top">
+        <div>
+          <div class="metric-name">Claude Design</div>
+          <div class="metric-sub">Design feature weekly usage</div>
+        </div>
+        <div class="metric-pct" id="design-pct">—</div>
+      </div>
+      <div class="track"><div class="fill fill-design" id="fill-design" style="width:0%"></div></div>
+      <span class="chip" id="chip-design"></span>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section-title">Additional features</div>
+
+    <div class="metric">
+      <div class="metric-top">
+        <div>
+          <div class="metric-name">Daily routine runs</div>
+          <div class="metric-sub" id="routines-sub">Daily included runs</div>
+        </div>
+        <div class="metric-pct" id="routines-count" style="font-size:15px;">—</div>
+      </div>
+      <div class="track"><div class="fill fill-routines" id="fill-routines" style="width:0%"></div></div>
+      <span class="chip" id="chip-routines"></span>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span class="last-updated" id="last-updated"></span>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <a class="open-btn" href="https://claude.ai/settings/usage" target="_blank">Open settings ↗</a>
+      <button class="refresh-btn" id="refresh-btn">↻ Refresh</button>
+    </div>
+  </div>
+</div>
+
+<script src="popup.js"></script>
+</body>
+</html>
