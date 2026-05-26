@@ -3,7 +3,7 @@
 A lightweight Chrome extension that puts your Claude.ai usage limits right in your browser toolbar. See your session usage, weekly limits, and routine runs at a glance — no digging through settings required.
 
 <img width="315" height="577" alt="image" src="https://github.com/user-attachments/assets/62056e70-f15d-425b-905e-3c48395269fc" />
----
+
 
 ## What it shows
 
